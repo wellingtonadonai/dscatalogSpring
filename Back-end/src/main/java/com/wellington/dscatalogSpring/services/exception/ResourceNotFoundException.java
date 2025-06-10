@@ -1,4 +1,4 @@
-package com.wellington.dscatalogSpring.services;
+package com.wellington.dscatalogSpring.services.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
   
