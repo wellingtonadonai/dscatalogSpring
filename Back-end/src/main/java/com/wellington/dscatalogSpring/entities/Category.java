@@ -35,10 +35,11 @@ public class Category implements Serializable {
 	}
 
 	public Category(Long id, String name) {
-		super();
+		
 		this.id = id;
 		this.name = name;
 	}
+	
 
 	public Long getId() {
 		return id;
@@ -88,6 +89,4 @@ public class Category implements Serializable {
 		Category other = (Category) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
-}
+	}
