@@ -12,19 +12,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.wellington.dscatalogSpring.DTO.CategoryDTO;
 import com.wellington.dscatalogSpring.DTO.ProductDTO;
+import com.wellington.dscatalogSpring.entities.Category;
 import com.wellington.dscatalogSpring.entities.Product;
+import com.wellington.dscatalogSpring.repositories.CategoryRepository;
 import com.wellington.dscatalogSpring.repositories.ProductRepository;
 import com.wellington.dscatalogSpring.services.exception.DatabaseException;
 import com.wellington.dscatalogSpring.services.exception.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 
-	@Service
+@Service
 	public class ProductService {
+
+      
 		
 		@Autowired
 		private ProductRepository repository;
+
+		@Autowired
+		private  CategoryRepository categoryRepository;
+		  
+		  
+    ProductService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 		
 		@Transactional (readOnly = true)
 		public Page<ProductDTO> findAllPaged(PageRequest pagerequest){
@@ -41,7 +54,7 @@ import jakarta.persistence.EntityNotFoundException;
 		@Transactional
 		public ProductDTO insert(ProductDTO dto) {
 			Product entity = new Product();
-			entity.setName(dto.getName());
+			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new ProductDTO (entity);
 		}
@@ -49,7 +62,7 @@ import jakarta.persistence.EntityNotFoundException;
 		public ProductDTO update(Long id ,ProductDTO dto) {
 			try {
 			Product entity = repository.getReferenceById(id);
-			entity.setName(dto.getName());
+			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new ProductDTO(entity);
 			}
@@ -59,6 +72,7 @@ import jakarta.persistence.EntityNotFoundException;
 			}
 
 	     }
+
 		@Transactional(propagation = Propagation.SUPPORTS) 
 		public void delete(Long id) {
 			if(!repository.existsById(id)) {
@@ -72,6 +86,23 @@ import jakarta.persistence.EntityNotFoundException;
 				throw new DatabaseException("Falha de integridade referencial");
 			}
 			
+		}
+		private void copyDtoToEntity(ProductDTO dto, Product entity) {
+			
+			entity.setName(dto.getName());
+			entity.setDescription(dto.getDescription());
+			entity.setDate(dto.getDate());
+			entity.setImgUrl(dto.getImgUrl());
+			entity.setPrice(dto.getPrice());
+			
+			entity.getCategories().clear();
+			
+			for(CategoryDTO catDTO : dto.getCategories()) {
+				
+				Category category = categoryRepository.getReferenceById(catDTO.getId());
+				entity.getCategories().add(category);
+				
+			}
 		}
 			
 	}
