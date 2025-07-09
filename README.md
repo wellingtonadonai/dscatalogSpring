@@ -91,4 +91,8 @@ Testes unitários com JUnit
 📄 Licença
 Este projeto está licenciado sob a licença MIT.
 
+## 👨‍💻 Autor
+
+Desenvolvido por Wellington como parte do aprendizado no curso da [DevSuperior](https://devsuperior.com.br).
+
 
